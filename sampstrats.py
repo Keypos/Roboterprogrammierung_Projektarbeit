@@ -1,7 +1,93 @@
 import random
 import math
 import copy
+import heapq
 import numpy as np
+import networkx as nx
+import IPPRMBase
+from IPPerfMonitor import IPPerfMonitor
+
+from scipy.spatial.distance import euclidean, cityblock
+
+class GaussianPRM(IPPRMBase.PRMBase):
+
+    def __init__(self, _collChecker):
+        super(GaussianPRM, self).__init__(_collChecker)
+        self.graph = nx.Graph()
+    
+    def _inSameConnectedComponent(self, node1, node2):
+        """ Check whether to nodes are part of the same connected component using
+            functionality from NetworkX
+        """
+        for connectedComponent in nx.connected_components(self.graph):
+            if (node1 in connectedComponent) & (node2 in connectedComponent):
+                return True
+
+        return False
+    
+    def _nearestNeighboursX(self, pos, radius):
+        """ Brute Force method to find all nodes of a 
+        graph near the given position **pos** with in the distance of
+        **radius** in **increasing order**"""
+        
+        heap = list()
+        for node in self.graph.nodes(data=True): # using (data=True) will generate a list of nodes with all attributes
+            if euclidean(node[1]['pos'], pos) < radius:
+                # use a heap-queue to sort the nodes in increasing order
+                heapq.heappush(heap, (euclidean(node[1]['pos'], pos), node))
+                #if len(heap) > 2 :
+                #    break
+
+        result = list()
+        while len(heap) > 0 :
+            result.append(heapq.heappop(heap)) 
+        
+        return result
+    
+    def learnRoadmapNearestNeighbour(self, radius, numNodes):
+        i = 1
+        while i < numNodes:
+            
+            # Generate a 'randomly chosen, free configuration'
+            pos = Gaussian_sampling(self._collisionChecker)
+            
+            # Find set of candidates to connect to sorted by distance
+            result = self._nearestNeighboursX(pos, radius)
+            
+            # check connection
+            self.graph.add_node(i, pos=pos)
+            for idx, data in enumerate(result):
+                if not self._inSameConnectedComponent(i, data[1][0]):
+                    if not self._collisionChecker.lineInCollision(pos,data[1][1]['pos']):
+                        self.graph.add_edge(i,data[1][0])
+                        
+            i+=1
+        
+    def planPath(self, start, goal, config):
+
+        self.learnRoadmapNearestNeighbour(config['radius'], config['numNodes'])
+
+        # find nearest, collision-free connection between node on graph and start
+        result = self._nearestNeighboursX(start, config['radius'])
+        for node in result:
+            if not self._collisionChecker.lineInCollision(start,node[1][1]['pos']):
+                self.graph.add_node("start", pos=start)
+                self.graph.add_edge("start",node[1][0])
+                break
+        # find nearest, collision-free connection between node on graph and goal
+        result = self._nearestNeighboursX(goal, config['radius'])
+
+        for node in result:
+            if not self._collisionChecker.lineInCollision(goal,node[1][1]['pos']):
+                self.graph.add_node("goal", pos=goal)
+                self.graph.add_edge("goal",node[1][0])
+                break
+        # find shortest path on graph
+        path = nx.shortest_path(self.graph,"start","goal")
+        # return nodelist
+        return path
+    
+
 #collChecker needed
 #Functions
 # Trys to get wanted pos else returns False

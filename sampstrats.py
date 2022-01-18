@@ -34,7 +34,7 @@ class GaussianPRM(IPPRMBase.PRMBase):
         for node in self.graph.nodes(data=True): # using (data=True) will generate a list of nodes with all attributes
             if euclidean(node[1]['pos'], pos) < radius:
                 # use a heap-queue to sort the nodes in increasing order
-                heapq.heappush(heap, (euclidean(node[1]['pos'] ,pos), node))
+                heapq.heappush(heap, (euclidean(node[1]['pos'], pos), node))
                 #if len(heap) > 2 :
                 #    break
 
@@ -44,78 +44,47 @@ class GaussianPRM(IPPRMBase.PRMBase):
         
         return result
     
-    def _learnRoadmapNearestNeighbour(self, radius, numNodes):
-        """ Generate a roadmap by given number of nodes and radius, that should be tested for connection."""
-        # nodeID is used for uniquely enumerating all nodes and as their name
-        nodeID = 1
-        while nodeID <= numNodes:
-        
+    def _learnRoadmapNearestNeighbour(self, config):
+        i = 1
+        while i < config['numNodes']:
+            
             # Generate a 'randomly chosen, free configuration'
-            newNodePos = Gaussian_sampling(self._collisionChecker)
-            self.graph.add_node(nodeID, pos=newNodePos)
+            pos = Gaussian_sampling(self._collisionChecker, config['mean'], config['sigma'])
             
             # Find set of candidates to connect to sorted by distance
-            result = self._nearestNeighboursX(newNodePos, radius)
+            result = self._nearestNeighboursX(pos, config['radius'])
+            
+            # check connection
+            self.graph.add_node(i, pos=pos)
+            for idx, data in enumerate(result):
+                if not self._inSameConnectedComponent(i, data[1][0]):
+                    if not self._collisionChecker.lineInCollision(pos,data[1][1]['pos']):
+                        self.graph.add_edge(i,data[1][0])
+                        
+            i+=1
+        
+    def planPath(self, start, goal, config):
 
-            # for all nearest neighbours check whether a connection is possible
-            for data in result:
-                if self._inSameConnectedComponent(nodeID,data[0]):
-                    break
-                
-                if not self._collisionChecker.lineInCollision(newNodePos,data[1]['pos']):
-                    self.graph.add_edge(nodeID,data[0])
-            
-            nodeID += 1
-        
-    def planPath(self, startList, goalList, config):
-        """
-        
-        Args:
-            start (array): start position in planning space
-            goal (array) : goal position in planning space
-            config (dict): dictionary with the needed information about the configuration options
-            
-        Example:
-        
-            config["radius"]   = 5.0
-            config["numNodes"] = 300
-            config["useKDTree"] = True
-            
-            startList = [[1,1]]
-            goalList  = [[10,1]]
-            
-            instance.planPath(startList,goalList,config)
-        
-        """
-        # 0. reset
-        self.graph.clear()
-        
-        # 1. check start and goal whether collision free (s. BaseClass)
-        checkedStartList, checkedGoalList = self._checkStartGoal(startList,goalList)
-        
-        # 2. learn Roadmap
-        self._learnRoadmapNearestNeighbour(config["radius"],config["numNodes"])
+        self._learnRoadmapNearestNeighbour(config)
 
-        # 3. find connection of start and goal to roadmap
         # find nearest, collision-free connection between node on graph and start
-        result = self._nearestNeighboursX(checkedStartList[0], config["radius"])
+        result = self._nearestNeighboursX(start, config['radius'])
         for node in result:
-            if not self._collisionChecker.lineInCollision(checkedStartList[0],node[1]['pos']):
-                 self.graph.add_node("start", pos=checkedStartList[0], color='lightgreen')
-                 self.graph.add_edge("start", node[0])
-                 break
+            if not self._collisionChecker.lineInCollision(start,node[1][1]['pos']):
+                self.graph.add_node("start", pos=start)
+                self.graph.add_edge("start",node[1][0])
+                break
+        # find nearest, collision-free connection between node on graph and goal
+        result = self._nearestNeighboursX(goal, config['radius'])
 
-        result = self._nearestNeighboursX(checkedGoalList[0], config["radius"])
         for node in result:
-            if not self._collisionChecker.lineInCollision(checkedGoalList[0],node[1]['pos']):
-                 self.graph.add_node("goal", pos=checkedGoalList[0], color='lightgreen')
-                 self.graph.add_edge("goal", node[0])
-                 break
-
-        try:
-            path = nx.shortest_path(self.graph,"start","goal")
-        except:
-            return []
+            if not self._collisionChecker.lineInCollision(goal,node[1][1]['pos']):
+                self.graph.add_node("goal", pos=goal)
+                self.graph.add_edge("goal",node[1][0])
+                break
+        # find shortest path on graph
+        path = nx.shortest_path(self.graph,"start","goal")
+        # return nodelist
         return path
     
 
@@ -205,7 +174,7 @@ def Bridge_Sampeling(collChecker):
     return False
 
 #-------------Gaussian Functions----------------
-def Gaussian_sampling(collChecker):
+def Gaussian_sampling(collChecker, meanValue, sigma):
     
     limits = collChecker.getEnvironmentLimits()        
     pos = [random.uniform(limit[0],limit[1]) for limit in limits]
@@ -223,8 +192,8 @@ def Gaussian_sampling(collChecker):
         #find a non colliding point in a given distance to point a 
         for i in range(0,50):
         #get a distance over a gaussian distribution   
-            me,sigma = 0,1 #Mean value of the gaussian distribution, standard deviation 
-            d=np.random.normal(me,sigma)
+            #me,sigma = 0,1 #Mean value of the gaussian distribution, standard deviation 
+            d=np.random.normal(meanValue, sigma)
             angle_list = [0,2*math.pi]
             for n in range(8):
                 #alpha=random.uniform(0,360)*(180/math.pi) #get an random angle in ra

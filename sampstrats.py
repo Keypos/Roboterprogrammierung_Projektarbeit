@@ -276,7 +276,29 @@ def Gaussian_sampling(collChecker):
     return pos
     """
 
-def simple_Gaussina_sampling(collChecker):
-    #nicht fertig
-    pos = [0,0]
-    return pos
+def simple_Gaus_Sampling(collChecker):
+    
+    
+    #Get the limites for the graph 
+    limits = collChecker.getEnvironmentLimits()   
+    #Get a random position within the limits    
+    pos = [random.uniform(limit[0],limit[1]) for limit in limits]
+    #If selected Configuration is not free pick the Point 
+    if not collChecker.pointInCollision(pos):
+        return False 
+    #get a distance for the second Point over a gaussian distribution 
+    d=np.random.normal(1,1)
+    pos_x=pos[0]
+    pos_y=pos[1]
+    #get a random angle between 0 and 360 
+    alpha=random.uniform(0,360)*(math.pi/180)
+    #calculate the new Point with the random angle and the selected distance d 
+    pos2_x=d*math.cos(alpha)+pos_x
+    pos2_y=d*math.sin(alpha)+pos_y
+    #store the Point 
+    pos2=[pos2_x,pos2_y]
+    #check if the Point is collision free 
+    if collChecker.pointInCollision(pos2):
+        return False
+    #if the point is  collision free return it 
+    return pos2

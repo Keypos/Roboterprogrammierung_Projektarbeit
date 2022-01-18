@@ -48,8 +48,10 @@ class GaussianPRM(IPPRMBase.PRMBase):
         i = 1
         while i < config['numNodes']:
             
+            sample_func = simple_Gaus_Sampling if config['simple'] else Gaussian_sampling
+
             # Generate a 'randomly chosen, free configuration'
-            pos = Gaussian_sampling(self._collisionChecker, config['mean'], config['sigma'])
+            pos = sample_func(self._collisionChecker, config['mean'], config['sigma'])
             
             # Find set of candidates to connect to sorted by distance
             result = self._nearestNeighboursX(pos, config['radius'])
@@ -220,7 +222,7 @@ def Gaussian_sampling(collChecker, meanValue, sigma):
     return pos
     """
 
-def simple_Gaus_Sampling(collChecker):
+def simple_Gaus_Sampling(collChecker, meanValue, sigma):
     
     
     #Get the limites for the graph 
@@ -231,7 +233,7 @@ def simple_Gaus_Sampling(collChecker):
     if not collChecker.pointInCollision(pos):
         return False 
     #get a distance for the second Point over a gaussian distribution 
-    d=np.random.normal(1,1)
+    d=np.random.normal(meanValue,sigma)
     pos_x=pos[0]
     pos_y=pos[1]
     #get a random angle between 0 and 360 

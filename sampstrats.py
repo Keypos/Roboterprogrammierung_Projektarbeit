@@ -44,15 +44,15 @@ class GaussianPRM(IPPRMBase.PRMBase):
         
         return result
     
-    def learnRoadmapNearestNeighbour(self, radius, numNodes):
+    def _learnRoadmapNearestNeighbour(self, config):
         i = 1
-        while i < numNodes:
+        while i < config['numNodes']:
             
             # Generate a 'randomly chosen, free configuration'
-            pos = Gaussian_sampling(self._collisionChecker)
+            pos = Gaussian_sampling(self._collisionChecker, config['mean'], config['sigma'])
             
             # Find set of candidates to connect to sorted by distance
-            result = self._nearestNeighboursX(pos, radius)
+            result = self._nearestNeighboursX(pos, config['radius'])
             
             # check connection
             self.graph.add_node(i, pos=pos)
@@ -65,7 +65,7 @@ class GaussianPRM(IPPRMBase.PRMBase):
         
     def planPath(self, start, goal, config):
 
-        self.learnRoadmapNearestNeighbour(config['radius'], config['numNodes'])
+        self._learnRoadmapNearestNeighbour(config)
 
         # find nearest, collision-free connection between node on graph and start
         result = self._nearestNeighboursX(start, config['radius'])
@@ -174,7 +174,7 @@ def Bridge_Sampeling(collChecker):
     return False
 
 #-------------Gaussian Functions----------------
-def Gaussian_sampling(collChecker):
+def Gaussian_sampling(collChecker, meanValue, sigma):
     
     limits = collChecker.getEnvironmentLimits()        
     pos = [random.uniform(limit[0],limit[1]) for limit in limits]
@@ -192,8 +192,8 @@ def Gaussian_sampling(collChecker):
         #find a non colliding point in a given distance to point a 
         for i in range(0,50):
         #get a distance over a gaussian distribution   
-            me,sigma = 0,1 #Mean value of the gaussian distribution, standard deviation 
-            d=np.random.normal(me,sigma)
+            #me,sigma = 0,1 #Mean value of the gaussian distribution, standard deviation 
+            d=np.random.normal(meanValue, sigma)
             angle_list = [0,2*math.pi]
             for n in range(8):
                 #alpha=random.uniform(0,360)*(180/math.pi) #get an random angle in ra

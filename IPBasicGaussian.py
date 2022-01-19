@@ -20,7 +20,7 @@ from scipy.spatial.distance import euclidean, cityblock
 class _simple_Gaussian(GaussianBase.C_GaussianBase):
 
     def __init__(self, _collChecker):
-        super(_simple_Gaussian, self).__init__(_collChecker)
+        super().__init__(_collChecker)
         self.graph = nx.Graph()
 
     @IPPerfMonitor

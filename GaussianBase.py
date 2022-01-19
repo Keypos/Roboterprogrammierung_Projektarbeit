@@ -12,7 +12,7 @@ import math
 class C_GaussianBase(PlanerBase):
 
     def __init__(self, collChecker):
-        super(C_GaussianBase, self).__init__(collChecker)
+        super().__init__(collChecker)
 
     def _getRandomPosition(self):
         limits = self._collisionChecker.getEnvironmentLimits()
@@ -26,7 +26,7 @@ class C_GaussianBase(PlanerBase):
             pos = self._getRandomPosition()
         return pos
 
-    @IPPerfMonitor
+    # @IPPerfMonitor
     def simple_Gaus_Sampling(collChecker):
 
         # Get the limites for the graph

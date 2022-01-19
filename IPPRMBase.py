@@ -15,16 +15,17 @@ except:
 
 import random
 
+
 class PRMBase(PlanerBase):
-    
-    def __init__(self,collChecker):
-        super(PRMBase,self).__init__(collChecker)
+
+    def __init__(self, collChecker):
+        super(PRMBase, self).__init__(collChecker)
 
     def _getRandomPosition(self):
-        limits = self._collisionChecker.getEnvironmentLimits()        
-        pos = [random.uniform(limit[0],limit[1]) for limit in limits]
+        limits = self._collisionChecker.getEnvironmentLimits()
+        pos = [random.uniform(limit[0], limit[1]) for limit in limits]
         return pos
-    
+
     @IPPerfMonitor
     def _getRandomFreePosition(self):
         pos = self._getRandomPosition()

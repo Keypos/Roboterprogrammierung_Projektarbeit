@@ -18,13 +18,25 @@ def basicPRMVisualize(planner, solution, ax=None, nodeSize=300):
     collChecker = planner._collisionChecker
 
     pos = nx.get_node_attributes(graph, 'pos')
+    color = nx.get_node_attributes(graph, 'color').values()
+
+    """
 
     # draw graph (nodes colorized by degree)
-    nx.draw_networkx_nodes(graph, pos,  cmap=plt.cm.Blues,
+    nx.draw_networkx_nodes(graph, pos, cmap=plt.cm.Blues,
                            ax=ax, node_size=nodeSize)
     nx.draw_networkx_edges(graph, pos,
                            ax=ax
                            )
+    """
+
+    # draw graph (nodes colorized by degree)
+    nx.draw_networkx_nodes(graph, pos, node_color=color,
+                           ax=ax, node_size=nodeSize)
+    nx.draw_networkx_edges(graph, pos,
+                           ax=ax
+                           )
+
     Gcc = sorted(nx.connected_components(graph), key=len, reverse=True)
     G0 = graph.subgraph(Gcc[0])  # = largest connected component
 

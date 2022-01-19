@@ -133,24 +133,21 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
     def _learnRoadmapNearestNeighbour(self, config):
         i = 1
 
-        while i < config['numNodesBasic']:
+        while i <= config['numNodesBasic']:
             # Generate a 'randomly chosen, free configuration'
             newNodePos = self._getRandomFreePosition()
-            self.graph.add_node(i, pos=newNodePos, type='b')
+            self.graph.add_node(i, pos=newNodePos, color='#970a7e')
             i += 1
 
 
-        i = 1
-        while i < config['numNodesGauss']:
-
-            sample_func = simple_Gaus_Sampling if config['simple'] else Gaussian_sampling
-
+        j = i
+        while j <= config['numNodesGauss'] + i:
             # Generate a 'randomly chosen, free configuration'
-            pos = sample_func(self._collisionChecker)
+            pos = simple_Gaus_Sampling(self._collisionChecker)
             while pos == False:
-                pos = sample_func(self._collisionChecker)
-            self.graph.add_node(i, pos=pos, type='g')
-            i += 1
+                pos = simple_Gaus_Sampling(self._collisionChecker)
+            self.graph.add_node(j, pos=pos, color='#9b870c')
+            j += 1
         
         for node in self.graph.nodes(data=True):
             # Find set of candidates to connect to sorted by distance
@@ -172,7 +169,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
         for node in result:
             print(node)
             if not self._collisionChecker.lineInCollision(checkedStartList[0], node[1][1]['pos']):
-                self.graph.add_node("start", pos=checkedStartList[0])
+                self.graph.add_node("start", pos=checkedStartList[0], color='#00dd00')
                 self.graph.add_edge("start", node[1][0])
                 break
         # find nearest, collision-free connection between node on graph and goal
@@ -180,7 +177,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
 
         for node in result:
             if not self._collisionChecker.lineInCollision(checkedGoalList[0], node[1][1]['pos']):
-                self.graph.add_node("goal", pos=checkedGoalList[0])
+                self.graph.add_node("goal", pos=checkedGoalList[0], color='#DD0000')
                 self.graph.add_edge("goal", node[1][0])
                 break
         # find shortest path on graph

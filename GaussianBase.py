@@ -27,7 +27,7 @@ class C_GaussianBase(PlanerBase):
         return pos
 
     # @IPPerfMonitor
-    def simple_Gaus_Sampling(collChecker):
+    def simple_Gaus_Sampling(self,collChecker):
 
         # Get the limites for the graph
         limits = collChecker.getEnvironmentLimits()

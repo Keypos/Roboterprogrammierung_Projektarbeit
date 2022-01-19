@@ -8,25 +8,25 @@ License is based on Creative Commons: Attribution-NonCommercial 4.0 Internationa
 
 
 class PlanerBase(object):
-    
+
     def __init__(self, collisionChecker):
         """Base constructor
-        
+
         Args:
-        
+
             :environment: Reference to Environment
-                
+
         """
         self._collisionChecker = collisionChecker
 
     def _checkStartGoal(self, startList, goalList):
         """Basic check for start and goal
-        
+
         Args:
-        
+
             :startList: list of start configurations
             :goalList: list of goal configurations
-        
+
         """
         newStartList = list()
         for start in startList:
@@ -43,10 +43,10 @@ class PlanerBase(object):
             if self._collisionChecker.pointInCollision(goal):
                 continue
             newGoalList.append(goal)
-                        
+
         if len(newStartList) == 0:
             raise Exception("No valid start")
         if len(newGoalList) == 0:
             raise Exception("No valid goal")
-    
+
         return newStartList, newGoalList

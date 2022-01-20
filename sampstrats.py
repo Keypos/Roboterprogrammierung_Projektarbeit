@@ -100,6 +100,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
         super(BasicGaussianPRM, self).__init__(_collChecker)
         self.graph = nx.Graph()
 
+    @IPPerfMonitor
     def _inSameConnectedComponent(self, node1, node2):
         """ Check whether to nodes are part of the same connected component using
             functionality from NetworkX
@@ -110,6 +111,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
 
         return False
 
+    @IPPerfMonitor
     def _nearestNeighboursX(self, pos, radius):
         """ Brute Force method to find all nodes of a 
         graph near the given position **pos** with in the distance of
@@ -130,6 +132,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
 
         return result
 
+    @IPPerfMonitor
     def _learnRoadmapNearestNeighbour(self, config):
         i = 1
 
@@ -157,6 +160,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
                     if not self._collisionChecker.lineInCollision(node[1]['pos'], data[1][1]['pos']):
                         self.graph.add_edge(node[0], data[1][0])
 
+    @IPPerfMonitor
     def planPath(self, startList, goalList, config):
 
         checkedStartList, checkedGoalList = self._checkStartGoal(
@@ -180,8 +184,13 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
                 self.graph.add_node("goal", pos=checkedGoalList[0], color='#DD0000')
                 self.graph.add_edge("goal", node[1][0])
                 break
-        # find shortest path on graph
-        path = nx.shortest_path(self.graph, "start", "goal")
+
+        try:
+            # find shortest path on graph
+            path = nx.shortest_path(self.graph, "start", "goal")
+        except:
+            return []
+        
         # return nodelist
         return path
 
@@ -330,7 +339,7 @@ def simple_Gaus_Sampling(collChecker):
     if not collChecker.pointInCollision(pos):
         return False
     # get a distance for the second Point over a gaussian distribution
-    d = np.random.normal(1, 1)
+    d = np.random.normal(1, 0.75)
     pos_x = pos[0]
     pos_y = pos[1]
     # get a random angle between 0 and 360

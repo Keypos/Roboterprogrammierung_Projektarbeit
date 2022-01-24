@@ -52,5 +52,6 @@ class CollisionChecker(object):
 
     def drawObstacles(self, ax):
         for key, value in self.scene.items():
-            patch = PolygonPatch(value, facecolor="red", alpha=0.8, zorder=2, label=key)
+            patch = PolygonPatch(value, facecolor="red",
+                                 alpha=0.8, zorder=2, label=key)
             ax.add_patch(patch)

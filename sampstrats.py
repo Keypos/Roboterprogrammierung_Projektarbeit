@@ -134,8 +134,8 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
 
     @IPPerfMonitor
     def _learnRoadmapNearestNeighbour(self, config):
-        i = 1
 
+        i = 1
         while i <= config['numNodesBasic']:
             # Generate a 'randomly chosen, free configuration'
             newNodePos = self._getRandomFreePosition()
@@ -339,7 +339,7 @@ def simple_Gaus_Sampling(collChecker):
     if not collChecker.pointInCollision(pos):
         return False
     # get a distance for the second Point over a gaussian distribution
-    d = np.random.normal(1, 0.75)
+    d = np.random.normal(0, 0.75)
     pos_x = pos[0]
     pos_y = pos[1]
     # get a random angle between 0 and 360

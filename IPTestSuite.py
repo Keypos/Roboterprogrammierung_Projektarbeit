@@ -24,10 +24,11 @@ benchList.append(Benchmark("Trap", CollisionChecker(trapField), [[10,15]], [[10,
 
 # -----------------------------------------
 bottleNeckField = dict()
-bottleNeckField["obs1"] = LineString([(0, 13), (11, 13)]).buffer(.5)
-bottleNeckField["obs2"] = LineString([(13, 13), (23,13)]).buffer(.5)
+bottleNeckField["obs1"] = Polygon([(-5, -5),(11,-5), (11, 30),(-5,30)])
+bottleNeckField["obs2"] = Polygon([(13, -5),(30,-5), (30, 30),(13,30)])
+#bottleNeckField["obs2"] = LineString([(13, 13), (23,13)]).buffer(10)
 description = "Planer has to find a narrow passage."
-benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField), [[4,15]], [[18,1]], description, 2))
+benchList.append(Benchmark("Bottleneck", CollisionChecker(bottleNeckField) , [[4,15]], [[18,1]], description, 2))
 
 # -----------------------------------------
 fatBottleNeckField = dict()

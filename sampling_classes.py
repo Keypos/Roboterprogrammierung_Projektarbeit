@@ -1,3 +1,12 @@
+"""
+In dieser Datei werden sämtliche Klassen für die Sampling-Verfahren definiert.
+- GaussianPRM           -> Das reine Gauss-Samping
+- BridgePRM             -> Das reine Bridge-Sampling
+- BasicGaussianPRM      -> Das vermischte Verfahren mit BasicPRM und GaussianPRM
+
+In Aufgabe 4 wird die Klasse 'BasicGaussianPRM' aus dieser Datei für den Vergleich verwendet.
+"""
+
 import random
 import math
 import copy
@@ -10,7 +19,6 @@ from IPPerfMonitor import IPPerfMonitor
 from sampling_algorithms import agressiv_Gaussian_sampling, simple_Gaussian_Sampling, normal_Gaus_Sampling, simple_Bridge_Sampling
 
 from scipy.spatial.distance import euclidean, cityblock
-
 
 class GaussianPRM(IPPRMBase.PRMBase):
     """

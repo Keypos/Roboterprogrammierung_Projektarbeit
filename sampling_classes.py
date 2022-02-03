@@ -8,7 +8,6 @@ import IPPRMBase
 from IPPerfMonitor import IPPerfMonitor
 
 from sampling_algorithms import agressiv_Gaussian_sampling, simple_Gaussian_Sampling, normal_Gaus_Sampling, simple_Bridge_Sampling
-from sampstrats import Gaussian_sampling
 
 from scipy.spatial.distance import euclidean, cityblock
 
@@ -286,7 +285,6 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
         # find nearest, collision-free connection between node on graph and start
         result = self._nearestNeighboursX(checkedStartList[0], config['radius'])
         for node in result:
-            print(node)
             if not self._collisionChecker.lineInCollision(checkedStartList[0], node[1][1]['pos']):
                 self.graph.add_node("start", pos=checkedStartList[0], color='#00dd00')
                 self.graph.add_edge("start", node[1][0])

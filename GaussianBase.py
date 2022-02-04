@@ -1,6 +1,10 @@
+
+"""
+Diese File 
+"""
+
+
 from IPPerfMonitor import IPPerfMonitor
-
-
 from IPPlanerBase import PlanerBase
 
 
@@ -27,7 +31,7 @@ class C_GaussianBase(PlanerBase):
         return pos
 
     # @IPPerfMonitor
-    def simple_Gaus_Sampling(self,collChecker):
+    def simple_Gaus_Sampling(self, collChecker):
 
         # Get the limites for the graph
         limits = collChecker.getEnvironmentLimits()

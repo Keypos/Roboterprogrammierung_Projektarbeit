@@ -258,6 +258,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
         elif config['method'] == 'aggressive':
             sample_func = agressiv_Gaussian_sampling        
 
+        # Populate the field using the simple Basic PRM method
         i = 1
         while i <= config['numNodesBasic']:
             # Generate a 'randomly chosen, free configuration'
@@ -265,6 +266,7 @@ class BasicGaussianPRM(IPPRMBase.PRMBase):
             self.graph.add_node(i, pos=newNodePos, color='#970a7e')
             i += 1
 
+        # Populate the field using the the gauss sampling
         j = i
         while j <= config['numNodesGauss'] + i:
             # Generate a 'randomly chosen, free configuration'

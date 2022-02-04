@@ -543,6 +543,7 @@ benchList.append(Benchmark("HKA (HKA)", CollisionChecker(HKA),
                  [[5, 8]], [[5, 14]], description, 2))
 
 # -----------------------------------------
+"""
 tLines = dict()
 tLines["part1"] = LineString([(5, 15), (20, 30)]).buffer(0.5)
 tLines["part2"] = LineString([(30, 20), (20, 30)]).buffer(0.5)
@@ -553,6 +554,7 @@ tLines["part6"] = LineString([(3, 10), (25, 10)]).buffer(0.5)
 description = "Planer has to find a passage around the lines."
 benchList.append(Benchmark("tLines (TK)", CollisionChecker(
     tLines), [[15, 22]], [[13, 20]], description, 2))
+"""
 # -----------------------------------------
 uLines = dict()
 uLines["obs1"] = LineString([(5, 18), (5, 2), (10, 2), (11, 14)]).buffer(0.5)
@@ -607,6 +609,7 @@ description = "Planner has to find path between random generated bubbles"
 benchList.append(Benchmark("Random Bubbles (MS)", CollisionChecker(
     bubbleScene), [[0, 0]], [[21, 21]], description, 3))
 # -----------------------------------------
+"""
 scene = dict()
 
 x = 5
@@ -621,9 +624,11 @@ for ind_x in range(0, 4):
 
         x += 5 + 2*ind_y + ind_x * 3
         y += 5 + ind_x * 4
+    
 description = "Point Matrix."
 benchList.append(Benchmark("Point Matrix (CH)", CollisionChecker(scene, limits=[
                  [0.0, 40.0], [0.0, 40.0]]), [[30, 35]], [[7.5, 7.5]], description, 2))
+"""
 # -----------------------------------------
 vfb = dict()
 vfb["obs1"] = LineString([(2, 15), (4, 6), (6, 15)]).buffer(1.0)
